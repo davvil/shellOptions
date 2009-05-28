@@ -37,7 +37,7 @@ __programUsage__="usage: `basename $0` [options]\n\nOptions:\n"
 
 function addOption() {
     debug echo "Option #${__nOptions__}:"
-    # These arrays must have the same length
+    # These arrays must have the same length for the __searchInArray__ function to work
     __longOptions__[$__nOptions__]="___not_a_valid_option___"
     __shortOptions__[$__nOptions__]="___not_a_valid_option___"
     local i
@@ -154,7 +154,7 @@ function parseOptions() {
                 else
                     local dest=${__optionDests__[$pos]}
                     if [[ "$dest" != "" ]]; then
-                        debug echo "\tOption has a dest"
+                        debug echo -e "\tOption has a dest"
                         local isFlag=${__optionFlag__[$pos]}
                         if [[ "$isFlag" != "" ]]; then
                             debug echo -e "\tOption $i is a flag"

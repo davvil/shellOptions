@@ -1,4 +1,4 @@
-# Options library for zsh, v1.2
+# Options library for zsh, v1.3
 
 # Adapted from the bash version, probably some things could be done more
 # efficiently in zsh directly.
@@ -94,7 +94,7 @@ function addOption() {
             debug echo -e "\tDon't show this option"
 
         else
-            echo "Unknown paramter to registerOption: $i" > /dev/stderr
+            echo "Unknown parameter to registerOption: $i" > /dev/stderr
             exit 1
         fi
     done
@@ -130,7 +130,7 @@ function __searchOption__() {
 }
 
 function __readConfig__() {
-    if [[ "__configFile__" != "" ]]; then
+    if [[ "$__configFile__" != "" ]]; then
         local -a options
         options=("$@")
         echo ${options[*]}

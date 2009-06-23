@@ -1,4 +1,4 @@
-# Options library for bash, v1.2
+# Options library for bash, v1.3
 
 # Copyright 2009 David Vilar
 #
@@ -88,7 +88,7 @@ function addOption() {
             debug echo -e "\tDon't show this option"
 
         else
-            echo "Unknown paramter to registerOption: $i" > /dev/stderr
+            echo "Unknown parameter to registerOption: $i" > /dev/stderr
             exit 1
         fi
     done
@@ -125,7 +125,7 @@ function __searchOption__() {
 }
 
 function __readConfig__() {
-    if [[ "__configFile__" != "" ]]; then
+    if [[ "$__configFile__" != "" ]]; then
         local options=("$@")
         local i=0;
         while (($i < ${#options[*]})); do

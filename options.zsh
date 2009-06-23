@@ -20,8 +20,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-function debug { $* > /dev/stderr; }
-#function debug {}
+#function debug { $* > /dev/stderr; }
+function debug {}
 
 function setUsage() {
     __programUsage__="$*"
@@ -167,9 +167,9 @@ function parseOptions() {
                         if [[ "$isFlag" != "" ]]; then
                             debug echo -e "\tOption $i is a flag"
                             if [[ $isFlag = 1 ]]; then
-                                eval $dest=true
+                                eval ${dest[2,-1]}=true
                             else
-                                eval $dest=false
+                                eval ${dest[2,-1]}=false
                             fi
 
                         else # It's not a flag

@@ -1,4 +1,4 @@
-# Options library for zsh, v1.1
+# Options library for zsh, v1.2
 
 # Adapted from the bash version, probably some things could be done more
 # efficiently in zsh directly.
@@ -27,8 +27,7 @@ function setUsage() {
     __programUsage__="$*"
 }
 
-__shortOptions__=()
-#typeset -a __shortOptions__
+typeset -a __shortOptions__
 typeset -a __longOptions__
 typeset -a __optionDests__
 typeset -a __optionActions__
@@ -36,6 +35,7 @@ typeset -a __optionDefaults__
 typeset -a __optionRequired__
 typeset -a __optionFlag__
 typeset -a __optionHelp__
+typeset -a __dontShow__
 
 typeset -a optArgv
 optArgc=0
@@ -89,6 +89,10 @@ function addOption() {
         elif [[ "$i" = configFile ]]; then
             __configFile__=$__nOptions__
 
+        elif [[ "$i" = dontShow ]]; then
+            __dontShow__[$__nOptions__]=1
+            debug echo -e "\tDon't show this option"
+
         else
             echo "Unknown paramter to registerOption: $i" > /dev/stderr
             exit 1
@@ -129,10 +133,11 @@ function __readConfig__() {
     if [[ "__configFile__" != "" ]]; then
         local -a options
         options=("$@")
-        local i=0;
+        echo ${options[*]}
+        local i=1;
         while (($i < ${#options[*]})); do
             if [[ "${options[$i]}" = -${__shortOptions__[$__configFile__]} ||
-                  "${options[$i]}" = "--${__shortOptions__[$__configFile__]}" ]]; then
+                  "${options[$i]}" = "--${__longOptions__[$__configFile__]}" ]]; then
                 . ${options[$((i+1))]}
                 break
             fi
@@ -249,6 +254,9 @@ function parseOptions() {
 
 function __printOptionHelp__() {
     local i=$1
+    if [[ "${__dontShow__[$i]}" = 1 ]]; then
+        return
+    fi
     local optionId=${__shortOptions__[$i]}
     if [[ $optionId != ___not_a_valid_option___ ]]; then
         optionId=-$optionId

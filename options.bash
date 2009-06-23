@@ -1,4 +1,4 @@
-# Options library for bash, v1.1
+# Options library for bash, v1.2
 
 # Copyright 2009 David Vilar
 #
@@ -29,6 +29,7 @@ declare -a __optionDefaults__
 declare -a __optionRequired__
 declare -a __optionFlag__
 declare -a __optionHelp__
+declare -a __dontShow__
 
 declare -a optArgv
 optArgc=0
@@ -80,6 +81,11 @@ function addOption() {
 
         elif [[ "$i" = configFile ]]; then
             __configFile__=$__nOptions__
+            debug echo -e "\tOption is a config file"
+
+        elif [[ "$i" = dontShow ]]; then
+            __dontShow__[$__nOptions__]=1
+            debug echo -e "\tDon't show this option"
 
         else
             echo "Unknown paramter to registerOption: $i" > /dev/stderr
@@ -124,7 +130,7 @@ function __readConfig__() {
         local i=0;
         while (($i < ${#options[*]})); do
             if [[ "${options[$i]}" = -${__shortOptions__[$__configFile__]} ||
-                  "${options[$i]}" = "--${__shortOptions__[$__configFile__]}" ]]; then
+                  "${options[$i]}" = "--${__longOptions__[$__configFile__]}" ]]; then
                 . ${options[$((i+1))]}
                 break
             fi
@@ -241,6 +247,9 @@ function parseOptions() {
 
 function __printOptionHelp__() {
     local i=$1
+    if [[ "${__dontShow__[$i]}" = 1 ]]; then
+        return
+    fi
     local optionId=${__shortOptions__[$i]}
     if [[ $optionId != ___not_a_valid_option___ ]]; then
         optionId=-$optionId

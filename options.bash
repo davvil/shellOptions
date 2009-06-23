@@ -1,4 +1,4 @@
-# Options library for bash, v1.0
+# Options library for bash, v1.1
 
 # Copyright 2009 David Vilar
 #
@@ -78,6 +78,9 @@ function addOption() {
             __optionFlag__[$__nOptions__]=0
             debug echo -e "\tOption is flag (false)"
 
+        elif [[ "$i" = configFile ]]; then
+            __configFile__=$__nOptions__
+
         else
             echo "Unknown paramter to registerOption: $i" > /dev/stderr
             exit 1
@@ -115,10 +118,28 @@ function __searchOption__() {
     echo $pos
 }
 
+function __readConfig__() {
+    if [[ "__configFile__" != "" ]]; then
+        local options=("$@")
+        local i=0;
+        while (($i < ${#options[*]})); do
+            if [[ "${options[$i]}" = -${__shortOptions__[$__configFile__]} ||
+                  "${options[$i]}" = "--${__shortOptions__[$__configFile__]}" ]]; then
+                . ${options[$((i+1))]}
+                break
+            fi
+            if [[ "${options[$i]}" = "--" ]]; then
+                break
+            fi
+            ((++i))
+        done
+    fi
+}
 
 function parseOptions() {
     # Set default values
     local i=0;
+    local flag;
     while (($i < $__nOptions__)); do
         default=${__optionDefaults__[$i]}
         if [[ "$default" != "" ]]; then
@@ -133,6 +154,9 @@ function parseOptions() {
         fi
         ((i++))
     done
+
+    # Read a config file (if we have one)
+    __readConfig__ "$@"
 
     # Parse the options
     local minusMinusSeen=false
@@ -217,11 +241,18 @@ function parseOptions() {
 
 function __printOptionHelp__() {
     local i=$1
-    local optionId="${__shortOptions__[$i]:+"-"${__shortOptions__[$i]}}"
-    if [[ "$optionId" != "" && "${__longOptions__[$i]}" != "" ]]; then
-        optionId=$optionId","
+    local optionId=${__shortOptions__[$i]}
+    if [[ $optionId != ___not_a_valid_option___ ]]; then
+        optionId=-$optionId
+        if [[ ${__longOptions__[$i]} != ___not_a_valid_option___ ]]; then
+            optionId=$optionId","
+        fi
+    else
+        optionId=""
     fi
-    optionId=${optionId}${__longOptions__[$i]:+"--"${__longOptions__[$i]}}
+    if [[ ${__longOptions__[$i]} != ___not_a_valid_option___ ]]; then
+        optionId=${optionId}"--"${__longOptions__[$i]}
+    fi
     optionId="   "$optionId
     local firstIndentLine
     if ((${#optionId} < 28)); then

@@ -1,4 +1,4 @@
-# Options library for bash, v1.3
+# Options library for bash, v1.4
 
 # Copyright 2009 David Vilar
 #
@@ -92,7 +92,7 @@ function addOption() {
             exit 1
         fi
     done
-    ((__nOptions__++))
+    ((++__nOptions__))
 }
 
 function __searchInArray__() {
@@ -106,7 +106,7 @@ function __searchInArray__() {
             echo $i
             return
         fi
-        ((i++))
+        ((++i))
         shift
     done
 }
@@ -158,7 +158,7 @@ function parseOptions() {
                 eval ${__optionDests__[$i]}=true
             fi
         fi
-        ((i++))
+        ((++i))
     done
 
     # Read a config file (if we have one)
@@ -179,7 +179,7 @@ function parseOptions() {
                         exit 1
                     else
                         optArgv[optArgc]="$1"
-                        ((optArgc++))
+                        ((++optArgc))
                     fi
                 else
                     local dest=${__optionDests__[$pos]}
@@ -210,7 +210,7 @@ function parseOptions() {
             fi
         else # minusMinusSeen
             optArgv[optArgc]="$1"
-            ((optArgc++))
+            ((++optArgc))
         fi
 
         shift
@@ -231,14 +231,14 @@ function parseOptions() {
             fi
             missingOptions[${#missingOptions[*]}]=$optionName
         fi
-        ((i++))
+        ((++i))
     done
     if (( ${#missingOptions[*]} > 0 )); then
         echo -n "Error: following mandatory options are missing: ${missingOptions[0]}" > /dev/stderr
         i=1
         while (($i < ${#missingOptions[*]})); do
             echo -n ",${missingOptions[$i]}" > /dev/stderr
-            ((i++))
+            ((++i))
         done
         echo "" > /dev/stderr
         exit 1

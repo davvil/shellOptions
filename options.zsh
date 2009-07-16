@@ -1,4 +1,4 @@
-# Options library for zsh, v1.3
+# Options library for zsh, v1.4
 
 # Adapted from the bash version, probably some things could be done more
 # efficiently in zsh directly.
@@ -43,7 +43,7 @@ __nOptions__=0;
 __programUsage__="usage: `basename $0` [options]\n\nOptions:\n"
 
 function addOption() {
-    ((__nOptions__++))
+    ((++__nOptions__))
     debug echo "Option #${__nOptions__}:"
     # These arrays must have the same length
     __longOptions__[$__nOptions__]="___not_a_valid_option___"
@@ -111,7 +111,7 @@ function __searchInArray__() {
             echo $i
             return
         fi
-        ((i++))
+        ((++i))
         shift
     done
 }
@@ -164,7 +164,7 @@ function parseOptions() {
                 eval ${__optionDests__[$i][2,-1]}=true
             fi
         fi
-        ((i++))
+        ((++i))
     done
 
     # Read a config file (if we have one)
@@ -185,7 +185,7 @@ function parseOptions() {
                         exit 1
                     else
                         debug echo "Argument found: $1"
-                        ((optArgc++))
+                        ((++optArgc))
                         optArgv[$optArgc]="$1"
                     fi
                 else
@@ -216,7 +216,7 @@ function parseOptions() {
                 fi
             fi
         else # minusMinusSeen
-            ((optArgc++))
+            ((++optArgc))
             optArgv[$optArgc]="$1"
         fi
 
@@ -238,14 +238,14 @@ function parseOptions() {
             fi
             missingOptions[${#missingOptions[*]}+1]=$optionName
         fi
-        ((i++))
+        ((++i))
     done
     if (( ${#missingOptions[*]} > 0 )); then
         echo -n "Error: following mandatory options are missing: ${missingOptions[1]}" > /dev/stderr
         i=2
         while (($i <= ${#missingOptions[*]})); do
             echo -n ",${missingOptions[$i]}" > /dev/stderr
-            ((i++))
+            ((++i))
         done
         echo "" > /dev/stderr
         exit 1

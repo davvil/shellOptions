@@ -1,4 +1,4 @@
-# Options library for zsh, v1.4
+# Options library for zsh, v1.5
 
 # Adapted from the bash version, probably some things could be done more
 # efficiently in zsh directly.
@@ -155,7 +155,7 @@ function parseOptions() {
     while (($i <= $__nOptions__)); do
         default=${__optionDefaults__[$i]}
         if [[ "$default" != "" ]]; then
-            eval ${__optionDests__[$i][2,-1]}=$default
+            eval ${__optionDests__[$i][2,-1]}=\"$default\"
         elif [[ "${__optionFlag__[$i]}" != "" ]]; then
             flag=${__optionFlag__[$i]}
             if [[ $flag = 1 ]]; then

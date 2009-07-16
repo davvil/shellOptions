@@ -1,4 +1,4 @@
-# Options library for bash, v1.4
+# Options library for bash, v1.5
 
 # Copyright 2009 David Vilar
 #
@@ -147,9 +147,9 @@ function parseOptions() {
     local i=0;
     local flag;
     while (($i < $__nOptions__)); do
-        default=${__optionDefaults__[$i]}
+        default="${__optionDefaults__[$i]}"
         if [[ "$default" != "" ]]; then
-            eval ${__optionDests__[$i]}=$default
+            eval ${__optionDests__[$i]}=\"$default\"
         elif [[ "${__optionFlag__[$i]}" != "" ]]; then
             flag=${__optionFlag__[$i]}
             if [[ $flag = 1 ]]; then

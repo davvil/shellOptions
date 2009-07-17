@@ -264,7 +264,7 @@ function __printOptionHelp__() {
     fi
     optionId="   "$optionId
     local firstIndentLine
-    if ((${#optionId} < 28)); then
+    if ((${#optionId} < 30)); then
         echo -n "$optionId"
         local c
         for c in `seq ${#optionId} 29`; do

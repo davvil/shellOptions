@@ -1,4 +1,4 @@
-# Options library for zsh, v1.5
+# Options library for zsh, v1.6
 
 # Adapted from the bash version, probably some things could be done more
 # efficiently in zsh directly.
@@ -98,6 +98,11 @@ function addOption() {
             exit 1
         fi
     done
+
+    if [[ "${__optionDests__[$__nOptions__]}" = "" && "${__longOptions__[$__nOptions__]}" != "" ]]; then
+        __optionDests__[$__nOptions__]=\$${__longOptions__[$__nOptions__]}
+        debug echo -e "\tSet default dest to ${__optionDests__[$__nOptions__]}"
+    fi
 }
 
 function __searchInArray__() {
@@ -133,7 +138,6 @@ function __readConfig__() {
     if [[ "$__configFile__" != "" ]]; then
         local -a options
         options=("$@")
-        echo ${options[*]}
         local i=1;
         while (($i < ${#options[*]})); do
             if [[ "${options[$i]}" = -${__shortOptions__[$__configFile__]} ||

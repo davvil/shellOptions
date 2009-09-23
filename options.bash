@@ -1,4 +1,4 @@
-# Options library for bash, v1.5
+# Options library for bash, v1.6
 
 # Copyright 2009 David Vilar
 #
@@ -92,6 +92,11 @@ function addOption() {
             exit 1
         fi
     done
+
+    if [[ "${__optionDests__[$__nOptions__]}" = "" && "${__longOptions__[$__nOptions__]}" != "" ]]; then
+        __optionDests__[$__nOptions__]=${__longOptions__[$__nOptions__]}
+    fi
+
     ((++__nOptions__))
 }
 

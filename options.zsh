@@ -297,7 +297,7 @@ function __showHelp__() {
         __printOptionHelp__ $i
         ((++i))
     done
-    __printOptionHelp__ 0 # -h
+    __printOptionHelp__ 1 # -h
     exit 0
 }
 

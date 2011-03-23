@@ -1,0 +1,88 @@
+options.bash and options.zsh
+    by David Vilar
+
+This is a small library for handling command line options in bash and zsh. It is
+inspired by the optparse python library. An example usage is
+
+    addOption -n --number required help="Specify some number" dest=myNumber
+    addOption -a --aux flagTrue help="Another option, but without dest"
+    addOption -o help="Option with default" default="a b" dest=otherO
+    parseOptions "$@"
+
+This example defines the options -n/--number, -a/--aux and -o. -n sets the
+variable $myNumber and is required by the script to run. -a sets the $aux
+variable to true when given (it does not require arguments). -o sets the
+variable $otherO, but if not specified on the command line, it defaults to "a b".
+Additionaly the option -h/--help is automatically generated and produces this
+output:
+
+    usage: example.bash [options]
+
+    Options:
+
+       -n,--number                Specify some number
+       -a,--aux                   Another option, but without dest
+       -o                         Option with default
+       -h,--help                  Show this help message
+
+To use the library in your own script, copy it somewhere and include it in your
+script (.bash or .zsh depending on which shell you use):
+
+. options.bash
+
+New options are added with the addOption command. It scans its arguments for
+those beginning with a dash to get the short and long option syntax (one of them
+can be omitted). Additionally you can give these additional commands:
+
++ dest=VAR 
+  Sets the destination of the variable. If not given, it defaults to
+  the long option name (see option --aux in the example above)
++ action=COMMAND
+  Calls command if the option is specified in the command line (usually this is
+  used for calling functions in the script, but it is not limited to it)
++ default=VALUE
+  Sets the default value for the option, if not given in the command line
++ required
+  Specifies that the option is required [I know, this is a contradiction of
+  terms ;-)]. The script will abort with an error message if the option is not
+  given in the command line
++ help=MESSAGE
+  Specifies the help message to be written in the output with the -h options
++ flagTrue/flagFalse
+  Specifies that the option is a boolean. flagTrue sets the default value to
+  false and turns it to true if the option is given in the command line. flagFalse
+  works the other way round. Note that you can use such variable directly in bash
+  constructs like if clauses, while loops, etc:
+
+      if $var; then
+              echo "var is set
+      fi
+
++ configFile
+  This option makes the script read an external file. Normally this is used as a
+  config file, where the values of variables are set, e.g.
+
+      input=file.in
+      output=file.out
+      iterations=3
+        
+  Note that the file is included directly in bash, no fancy parsing is done.
+  This means among other things that no whitespace is allowed around = signs and
+  that command can be executed from within the "config file". Use with caution.
++ dontShow
+  Do not show the option in the output of -h. Useful if some options are thought
+  to be used only when calling the script from other script.
+
+Once you have defined the options for your script, use the command
+    parseOptions "$@"
+to parse the command line and set the appropriate variables. Additional command
+line arguments are stored in the $optArgv[] array, with $optArgc storing the
+number of actual arguments. 
+
+The library follows the usual convention of supporting -- to separate options
+from command line arguments, e.g. in the call
+    ./example.sh -n 3 -a -- -b aaa
+the arguments are "-b" and "aaa".
+        
+This library has been extensively used in the Jane statistical machine
+translation toolkit (http://www.hltpr.rwth-aachen.de/jane)
